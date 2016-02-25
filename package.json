@@ -1,0 +1,40 @@
+{
+  "name": "s3-append",
+  "version": "0.0.0",
+  "description": "Appends text to files on S3",
+  "dependencies": {
+    "aws-sdk": "^2.2.36",
+    "es6-promise": "^3.1.2",
+    "source-map-support": "^0.4.0",
+    "tsc": "^1.20150623.0",
+    "typescript": "^1.7.5",
+    "typings": "^0.6.8"
+  },
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  },
+  "scripts": {
+    "preinstall": "npm install tsc",
+    "postinstall": "npm run clean && npm run typings install && npm run tsc",
+    "tsc": "tsc",
+    "clean": "rm -rf dist",
+    "clean-tests": "rm -rf dist/test",
+    "tsc:w": "tsc -w",
+    "pretest": "npm run tsc",
+    "test": "mocha",
+    "typings": "typings"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colinmathews/s3-append.git"
+  },
+  "author": "Colin Mathews",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/colinmathews/s3-append/issues"
+  },
+  "homepage": "https://github.com/colinmathews/s3-append#readme"
+}

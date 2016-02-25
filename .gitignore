@@ -31,3 +31,10 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# We have sensitive keys here
+aws-config.json
+
+# We use Typescript, not JS
+dist
+typings
