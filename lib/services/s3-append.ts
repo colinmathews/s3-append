@@ -2,6 +2,8 @@ import { Promise } from 'es6-promise';
 import S3Config from '../models/s3-config';
 import Format from '../models/format';
 import { S3, config as awsConfig, Config, Credentials } from 'aws-sdk';
+import util = require('util');
+require('date-format-lite');
 
 export default class S3Append {
   private readDate: Date;
@@ -20,20 +22,20 @@ export default class S3Append {
     });
   }
 
-  append (text: string|any, autoFlush: boolean = false) {
-    var promise = this.waitForPromises()
+  appendWithDate(text: string, second?: boolean|any[], third?: boolean): Promise<any> {
+    let now = new Date();
+    let formattedDate = (<any>now).format('YYYY-MM-DD hh:mm:ss.SS');
+    return this.append(`${formattedDate}: ${text}`, second, third);    
+  }
+
+  append(text: string|any, second?: boolean|any[], third?: boolean): Promise<any> {
+    let [formatArgs, autoFlush] = this.parseAppendArgs(second, third);
+    let promise = this.waitForPromises()
     .then(() => {
       return this.readContents();
     })
     .then(() => {
-      switch(this.format) {
-        case Format.Text:
-          return this.appendText(text);
-        case Format.Json:
-          return this.appendJson(text);
-        default:
-          throw new Error('Unexpected format: ' + this.format);
-      }
+      return this.delegateAppend(text, formatArgs);
     })
     .then(() => {
       this.hasChanges = true;
@@ -45,7 +47,22 @@ export default class S3Append {
     return promise;
   }
 
-  flush (promiseToIgnore?: Promise<any>): Promise<any> {
+  private parseAppendArgs(second?: boolean|any[], third?: boolean) : [any[], boolean] {
+    let formatArgs: any[] = [];
+    let autoFlush: boolean = false;
+    if (typeof(second) === 'boolean') {
+      autoFlush = <boolean>second;
+    }
+    else if (second instanceof Array) {
+      formatArgs = <any[]>second;
+    }
+    if (typeof(third) === 'boolean') {
+      autoFlush = third;
+    }
+    return [formatArgs, autoFlush];
+  }
+
+  flush(promiseToIgnore?: Promise<any>): Promise<any> {
     return this.waitForPromises(promiseToIgnore)
     .then(() => {
       this.pendingPromises = [];
@@ -162,10 +179,21 @@ export default class S3Append {
     });
   }
 
-  private appendText(text: string|any): Promise<any> {
+  private delegateAppend(text: string|any, formatArgs:any[]) {
+    switch(this.format) {
+        case Format.Text:
+          return this.appendText(text, formatArgs);
+        case Format.Json:
+          return this.appendJson(text, formatArgs);
+        default:
+          throw new Error('Unexpected format: ' + this.format);
+      }
+  }
+
+  private appendText(text: string|any, formatArgs:any[]): Promise<any> {
     let message;
     if (typeof(text) === 'string') {
-      message = text;
+      message = util.format.apply(util, [text].concat(formatArgs));
     }
     else {
       message = JSON.stringify(text);
@@ -174,7 +202,7 @@ export default class S3Append {
     return Promise.resolve();
   }
 
-  private appendJson(text: string|any): Promise<any> {
+  private appendJson(text: string|any, formatArgs:any[]): Promise<any> {
     this.contentsAsJson.push(text);
     this.contents = JSON.stringify(this.contentsAsJson);
     return Promise.resolve();
