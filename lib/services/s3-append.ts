@@ -174,6 +174,7 @@ export default class S3Append {
         if (err) {
           return fail(err);
         }
+        this.hasChanges = false;
         ok();
       });
     });
