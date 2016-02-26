@@ -21,7 +21,8 @@ describe('Append', () => {
     let rawConfig = JSON.parse(fs.readFileSync(jsonPath));
     let s3Config = new S3Config(rawConfig);
     let now = new Date();
-    key = `${rawConfig.testKeyPrefix}${now}.${now.getMilliseconds()}.txt`;
+    let uniqueID = (<any>now).format('YYYY-MM-DD hh:mm:ss.SS');
+    key = `${rawConfig.testKeyPrefix}${uniqueID}.txt`;
     subject = new S3Append(s3Config, key, format);
   };
 
