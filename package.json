@@ -1,6 +1,6 @@
 {
   "name": "s3-append",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Appends text or JSON to files on S3.",
   "dependencies": {
     "aws-sdk": "^2.2.36",
