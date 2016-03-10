@@ -3,6 +3,7 @@ import S3Config from '../models/s3-config';
 import Format from '../models/format';
 import { S3, config as awsConfig, Config, Credentials } from 'aws-sdk';
 import util = require('util');
+import contentType from '../util/content-type';
 require('date-format-lite');
 
 export default class S3Append {
@@ -148,23 +149,12 @@ export default class S3Append {
     }
   }
 
-  private getContentType(): string {
-    switch(this.format) {
-      case Format.Text:
-        return 'text/plain';
-      case Format.Json:
-        return 'application/json';
-      default:
-        throw new Error('Unexpected format: ' + this.format);
-    }
-  }
-
   private writeContents(): Promise<any> {
     let s3 = new S3();
     let args = {
       Bucket: this.config.bucket,
       Key: this.key,
-      ContentType : this.getContentType(),
+      ContentType : contentType(this.format),
       Body: new Buffer(this.contents),
       ACL: this.acl
     };
