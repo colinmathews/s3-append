@@ -20,7 +20,6 @@ export default class S3Append {
     private waitForPromises(promiseToIgnore?);
     private readContents();
     private onRead(contents);
-    private getContentType();
     private writeContents();
     private delegateAppend(text, formatArgs);
     private appendText(text, formatArgs);

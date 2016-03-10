@@ -3,6 +3,7 @@ var es6_promise_1 = require('es6-promise');
 var format_1 = require('../models/format');
 var aws_sdk_1 = require('aws-sdk');
 var util = require('util');
+var content_type_1 = require('../util/content-type');
 require('date-format-lite');
 var S3Append = (function () {
     function S3Append(config, key, format, acl) {
@@ -138,23 +139,13 @@ var S3Append = (function () {
             }
         }
     };
-    S3Append.prototype.getContentType = function () {
-        switch (this.format) {
-            case format_1.default.Text:
-                return 'text/plain';
-            case format_1.default.Json:
-                return 'application/json';
-            default:
-                throw new Error('Unexpected format: ' + this.format);
-        }
-    };
     S3Append.prototype.writeContents = function () {
         var _this = this;
         var s3 = new aws_sdk_1.S3();
         var args = {
             Bucket: this.config.bucket,
             Key: this.key,
-            ContentType: this.getContentType(),
+            ContentType: content_type_1.default(this.format),
             Body: new Buffer(this.contents),
             ACL: this.acl
         };
