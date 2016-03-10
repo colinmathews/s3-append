@@ -36,5 +36,4 @@ node_modules
 aws-config.json
 
 # We use Typescript, not JS
-dist
 typings
