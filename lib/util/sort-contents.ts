@@ -1,5 +1,6 @@
 import { Promise } from 'es6-promise'; 
 import FileContents from '../models/file-contents';
+import Format from '../models/format';
 import path = require('path');
 import util = require('util');
 
@@ -82,10 +83,13 @@ export function sortJSON(files: FileContents[]): any[] {
   return lines;
 }
 
-export default function sortContents(files: FileContents[]): string | Promise<string> {
+export default function sortContents(files: FileContents[]): any | Promise<any> {
   let json = sortJSON(files);
   if (!!json) {
-    return JSON.stringify(json);
+    return {
+      format: Format.Json,
+      contents: JSON.stringify(json)
+    };
   }
 
   let lines = files.reduce((result, row) => {
@@ -96,5 +100,8 @@ export default function sortContents(files: FileContents[]): string | Promise<st
     return result.concat(rowLines);
   }, []);
   lines.sort();
-  return lines.join('\n');
+  return {
+    format: Format.Text,
+    contents: lines.join('\n')
+  };
 }

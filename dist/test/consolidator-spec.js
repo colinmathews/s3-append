@@ -6,7 +6,6 @@ var path = require('path');
 var fs = require('fs');
 var chai_1 = require('chai');
 var s3_config_1 = require('../lib/models/s3-config');
-var format_1 = require('../lib/models/format');
 var s3_consolidator_1 = require('../lib/services/s3-consolidator');
 var aws_sdk_1 = require('aws-sdk');
 function deleteKey(config, s3, key) {
@@ -109,7 +108,7 @@ describe('Consolidator', function () {
             return subject.concatonate(files.map(function (row) { return row.key; }))
                 .then(function (result) {
                 chai_1.assert.isNotNull(result);
-                chai_1.assert.equal(result, ['a', 'b', 'c', 'x', 'z'].join('\n'));
+                chai_1.assert.equal(result.contents, ['a', 'b', 'c', 'x', 'z'].join('\n'));
             });
         });
     });
@@ -130,7 +129,7 @@ describe('Consolidator', function () {
             return Promise.all(promises);
         });
         it('should consolidate two files into a new file', function () {
-            return subject.consolidate(files.map(function (row) { return row.key; }), thirdFile, format_1.default.Text)
+            return subject.consolidate(files.map(function (row) { return row.key; }), thirdFile)
                 .then(function (result) {
                 var promises = [files[0].key, files[1].key, thirdFile].map(function (row) {
                     return downloadKey(s3Config, s3, row);
@@ -146,7 +145,7 @@ describe('Consolidator', function () {
             });
         });
         it('should consolidate two files into a one of the same files', function () {
-            return subject.consolidate(files.map(function (row) { return row.key; }), files[0].key, format_1.default.Text)
+            return subject.consolidate(files.map(function (row) { return row.key; }), files[0].key)
                 .then(function (result) {
                 var promises = [files[0].key, files[1].key].map(function (row) {
                     return downloadKey(s3Config, s3, row);

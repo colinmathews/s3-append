@@ -1,4 +1,5 @@
 "use strict";
+var format_1 = require('../models/format');
 var path = require('path');
 var util = require('util');
 var supportedDateFields = ['created', 'createDate', 'creationDate', 'date'];
@@ -80,7 +81,10 @@ exports.sortJSON = sortJSON;
 function sortContents(files) {
     var json = sortJSON(files);
     if (!!json) {
-        return JSON.stringify(json);
+        return {
+            format: format_1.default.Json,
+            contents: JSON.stringify(json)
+        };
     }
     var lines = files.reduce(function (result, row) {
         var rowLines = row.contents.split('\n')
@@ -90,7 +94,10 @@ function sortContents(files) {
         return result.concat(rowLines);
     }, []);
     lines.sort();
-    return lines.join('\n');
+    return {
+        format: format_1.default.Text,
+        contents: lines.join('\n')
+    };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = sortContents;

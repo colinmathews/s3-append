@@ -5,6 +5,7 @@ require('source-map-support').install({
 var es6_promise_1 = require('es6-promise');
 var chai_1 = require('chai');
 var file_contents_1 = require('../lib/models/file-contents');
+var format_1 = require('../lib/models/format');
 var sort_contents_1 = require('../lib/util/sort-contents');
 var sort_contents_2 = require('../lib/util/sort-contents');
 describe('Sort', function () {
@@ -91,7 +92,8 @@ describe('Sort', function () {
             })
                 .then(function (result) {
                 chai_1.assert.isNotNull(result);
-                chai_1.assert.equal(result, ['a', 'b', 'c', 'q', 'z'].join('\n'));
+                chai_1.assert.equal(result.format, format_1.default.Text);
+                chai_1.assert.equal(result.contents, ['a', 'b', 'c', 'q', 'z'].join('\n'));
             });
         });
         it('should sort JSON files with dates', function () {
@@ -107,7 +109,8 @@ describe('Sort', function () {
             })
                 .then(function (result) {
                 chai_1.assert.isNotNull(result);
-                chai_1.assert.equal(result, JSON.stringify([
+                chai_1.assert.equal(result.format, format_1.default.Json);
+                chai_1.assert.equal(result.contents, JSON.stringify([
                     { created: now },
                     { date: future }
                 ]));
@@ -126,7 +129,8 @@ describe('Sort', function () {
             })
                 .then(function (result) {
                 chai_1.assert.isNotNull(result);
-                chai_1.assert.equal(result, JSON.stringify([
+                chai_1.assert.equal(result.format, format_1.default.Json);
+                chai_1.assert.equal(result.contents, JSON.stringify([
                     { created: now },
                     { notADate: 'hi' }
                 ]));
@@ -145,7 +149,8 @@ describe('Sort', function () {
             })
                 .then(function (result) {
                 chai_1.assert.isNotNull(result);
-                chai_1.assert.equal(result, ['not JSON', JSON.stringify({ created: now })].join('\n'));
+                chai_1.assert.equal(result.format, format_1.default.Text);
+                chai_1.assert.equal(result.contents, ['not JSON', JSON.stringify({ created: now })].join('\n'));
             });
         });
     });

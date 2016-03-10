@@ -120,7 +120,7 @@ describe('Consolidator', () => {
       return subject.concatonate(files.map((row) => row.key))
       .then((result) => {
         assert.isNotNull(result);
-        assert.equal(result, ['a', 'b', 'c', 'x', 'z'].join('\n'));
+        assert.equal(result.contents, ['a', 'b', 'c', 'x', 'z'].join('\n'));
       });
     });
   });
@@ -144,7 +144,7 @@ describe('Consolidator', () => {
     });
 
     it('should consolidate two files into a new file', function() {
-      return subject.consolidate(files.map((row) => row.key), thirdFile, Format.Text)
+      return subject.consolidate(files.map((row) => row.key), thirdFile)
       .then((result) => {
         let promises = [files[0].key, files[1].key, thirdFile].map((row) => {
           return downloadKey(s3Config, s3, row);
@@ -161,7 +161,7 @@ describe('Consolidator', () => {
     });
 
     it('should consolidate two files into a one of the same files', function() {
-      return subject.consolidate(files.map((row) => row.key), files[0].key, Format.Text)
+      return subject.consolidate(files.map((row) => row.key), files[0].key)
       .then((result) => {
         let promises = [files[0].key, files[1].key].map((row) => {
           return downloadKey(s3Config, s3, row);

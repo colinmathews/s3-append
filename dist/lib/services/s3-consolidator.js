@@ -25,13 +25,13 @@ var S3Consolidator = (function () {
             return sort(result);
         });
     };
-    S3Consolidator.prototype.consolidate = function (keys, consolidatedKey, format, sort, acl) {
+    S3Consolidator.prototype.consolidate = function (keys, consolidatedKey, sort, acl) {
         var _this = this;
         if (sort === void 0) { sort = sort_contents_1.default; }
         if (acl === void 0) { acl = 'private'; }
         return this.concatonate(keys, sort)
             .then(function (result) {
-            return _this.write(consolidatedKey, format, result, acl);
+            return _this.write(consolidatedKey, result.format, result.contents, acl);
         })
             .then(function () {
             var keysToDelete = keys.filter(function (row) {

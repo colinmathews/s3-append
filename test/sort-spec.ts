@@ -4,6 +4,7 @@ require('source-map-support').install({
 import { Promise } from 'es6-promise';
 import { assert } from 'chai';
 import FileContents from '../lib/models/file-contents';
+import Format from '../lib/models/format';
 import sortContents from '../lib/util/sort-contents';
 import { isJSON, getDate, sortJSON } from '../lib/util/sort-contents';
 
@@ -103,7 +104,8 @@ describe('Sort', () => {
       })
       .then((result) => {
         assert.isNotNull(result);
-        assert.equal(result, ['a', 'b', 'c', 'q', 'z'].join('\n'));
+        assert.equal(result.format, Format.Text);
+        assert.equal(result.contents, ['a', 'b', 'c', 'q', 'z'].join('\n'));
       });
     });
 
@@ -120,7 +122,8 @@ describe('Sort', () => {
       })
       .then((result) => {
         assert.isNotNull(result);
-        assert.equal(result, JSON.stringify([
+        assert.equal(result.format, Format.Json);
+        assert.equal(result.contents, JSON.stringify([
           { created: now },
           { date: future }
         ]));
@@ -140,7 +143,8 @@ describe('Sort', () => {
         })
         .then((result) => {
           assert.isNotNull(result);
-          assert.equal(result, JSON.stringify([
+          assert.equal(result.format, Format.Json);
+          assert.equal(result.contents, JSON.stringify([
             { created: now },
             { notADate: 'hi' }
           ]));
@@ -160,7 +164,8 @@ describe('Sort', () => {
         })
         .then((result) => {
           assert.isNotNull(result);
-          assert.equal(result, ['not JSON', JSON.stringify({ created: now })].join('\n'));
+          assert.equal(result.format, Format.Text);
+          assert.equal(result.contents, ['not JSON', JSON.stringify({ created: now })].join('\n'));
         });
     });
   });

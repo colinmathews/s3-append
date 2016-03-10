@@ -1,7 +1,7 @@
 {
   "name": "s3-append",
   "version": "1.0.3",
-  "description": "Appends text to files on S3",
+  "description": "Appends text or JSON to files on S3.",
   "dependencies": {
     "aws-sdk": "^2.2.36",
     "date-format-lite": "^0.7.4",
@@ -21,13 +21,13 @@
   },
   "scripts": {
     "build": "npm run clean && npm run typings install && npm run tsc",
-    "predopublish": "build && uncommitted",
+    "predopublish": "npm run build && uncommitted",
     "dopublish": "npm publish",
     "tsc": "tsc",
     "clean": "rm -rf dist",
     "clean-tests": "rm -rf dist/test",
     "tsc:w": "tsc -w",
-    "pretest": "build",
+    "pretest": "npm run build",
     "test": "mocha",
     "typings": "typings"
   },

@@ -24,7 +24,7 @@ export default class S3Consolidator {
     });
   }
 
-  concatonate(keys: string[], sort: sorter = sortContents): Promise<string> {
+  concatonate(keys: string[], sort: sorter = sortContents): Promise<any> {
     return this.downloadAll(keys)
     .then((result) => {
       return sort(result);
@@ -33,12 +33,11 @@ export default class S3Consolidator {
 
   consolidate(keys: string[], 
     consolidatedKey:string,
-    format:Format,
     sort: sorter = sortContents,
     acl: string = 'private'): Promise<any> {
     return this.concatonate(keys, sort)
     .then((result) => {
-      return this.write(consolidatedKey, format, result, acl);
+      return this.write(consolidatedKey, result.format, result.contents, acl);
     })
     .then(() => {
       let keysToDelete = keys.filter((row) => {
