@@ -20,13 +20,14 @@
     "typings": "^0.6.8"
   },
   "scripts": {
-    "predopublish": "npm run clean && npm run typings install && npm run tsc && uncommitted",
+    "build": "npm run clean && npm run typings install && npm run tsc",
+    "predopublish": "build && uncommitted",
     "dopublish": "npm publish",
     "tsc": "tsc",
     "clean": "rm -rf dist",
     "clean-tests": "rm -rf dist/test",
     "tsc:w": "tsc -w",
-    "pretest": "npm run clean && npm run typings install && npm run tsc",
+    "pretest": "build",
     "test": "mocha",
     "typings": "typings"
   },
