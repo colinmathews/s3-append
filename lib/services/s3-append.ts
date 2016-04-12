@@ -1,7 +1,7 @@
 import { Promise } from 'es6-promise';
 import S3Config from '../models/s3-config';
 import Format from '../models/format';
-import { S3, config as awsConfig, Config, Credentials } from 'aws-sdk';
+import { S3, config as awsConfig, Credentials } from 'aws-sdk';
 import util = require('util');
 import contentType from '../util/content-type';
 require('date-format-lite');
@@ -13,7 +13,8 @@ export default class S3Append {
   private hasChanges: boolean = false;
   private pendingPromises: Promise<any>[] = [];
 
-  constructor(public config: S3Config, 
+  constructor(
+    public config: S3Config,
     public key: string,
     public format: Format = Format.Text,
     public acl: string = 'private') {
@@ -25,8 +26,8 @@ export default class S3Append {
 
   appendWithDate(text: string, second?: boolean|any[], third?: boolean): Promise<any> {
     let now = new Date();
-    let formattedDate = (<any>now).format('YYYY-MM-DD hh:mm:ss.SS');
-    return this.append(`${formattedDate}: ${text}`, second, third);    
+    let formattedDate = (now as any).format('YYYY-MM-DD hh:mm:ss.SS');
+    return this.append(`${formattedDate}: ${text}`, second, third);
   }
 
   append(text: string|any, second?: boolean|any[], third?: boolean): Promise<any> {
@@ -46,21 +47,6 @@ export default class S3Append {
     });
     this.pendingPromises.push(promise);
     return promise;
-  }
-
-  private parseAppendArgs(second?: boolean|any[], third?: boolean) : [any[], boolean] {
-    let formatArgs: any[] = [];
-    let autoFlush: boolean = false;
-    if (typeof(second) === 'boolean') {
-      autoFlush = <boolean>second;
-    }
-    else if (second instanceof Array) {
-      formatArgs = <any[]>second;
-    }
-    if (typeof(third) === 'boolean') {
-      autoFlush = third;
-    }
-    return [formatArgs, autoFlush];
   }
 
   flush(promiseToIgnore?: Promise<any>): Promise<any> {
@@ -84,22 +70,37 @@ export default class S3Append {
     });
   }
 
-  delete() : Promise<any> {
+  delete(): Promise<any> {
     let s3 = new S3();
     let args = {
       Bucket: this.config.bucket,
-      Key: decodeURIComponent(this.key.replace(/\+/g, " "))
+      Key: decodeURIComponent(this.key.replace(/\+/g, ' '))
     };
 
     return new Promise((ok, fail) => {
-      (<any>s3).deleteObject(args, (err, data) => {
+      (s3 as any).deleteObject(args, (err, data) => {
         if (err) {
           return fail(err);
         }
         this.readDate = this.contents = this.contentsAsJson = null;
         ok();
       });
-    }); 
+    });
+  }
+
+  private parseAppendArgs(second?: boolean | any[], third?: boolean): [any[], boolean] {
+    let formatArgs: any[] = [];
+    let autoFlush: boolean = false;
+    if (typeof (second) === 'boolean') {
+      autoFlush = second as boolean;
+    }
+    else if (second instanceof Array) {
+      formatArgs = second as any[];
+    }
+    if (typeof (third) === 'boolean') {
+      autoFlush = third;
+    }
+    return [formatArgs, autoFlush];
   }
 
   private waitForPromises(promiseToIgnore?: Promise<any>): Promise<any> {
@@ -117,7 +118,7 @@ export default class S3Append {
     let s3 = new S3();
     let args = {
       Bucket: this.config.bucket,
-      Key: decodeURIComponent(this.key.replace(/\+/g, " "))
+      Key: decodeURIComponent(this.key.replace(/\+/g, ' '))
     };
 
     return new Promise((ok, fail) => {
@@ -133,15 +134,15 @@ export default class S3Append {
         this.onRead(raw);
         ok();
       });
-    }); 
+    });
   }
 
-  private onRead(contents: string) {
+  private onRead(contents: string): void {
     this.readDate = new Date();
     this.contents = contents;
     if (this.format === Format.Json) {
       if (contents) {
-        this.contentsAsJson = JSON.parse(contents);  
+        this.contentsAsJson = JSON.parse(contents);
       }
       else {
         this.contentsAsJson  = [];
@@ -170,8 +171,8 @@ export default class S3Append {
     });
   }
 
-  private delegateAppend(text: string|any, formatArgs:any[]) {
-    switch(this.format) {
+  private delegateAppend(text: string|any, formatArgs: any[]): Promise<any> {
+    switch (this.format) {
         case Format.Text:
           return this.appendText(text, formatArgs);
         case Format.Json:
@@ -181,7 +182,7 @@ export default class S3Append {
       }
   }
 
-  private appendText(text: string|any, formatArgs:any[]): Promise<any> {
+  private appendText(text: string|any, formatArgs: any[]): Promise<any> {
     let message;
     if (typeof(text) === 'string') {
       message = util.format.apply(util, [text].concat(formatArgs));
@@ -193,7 +194,7 @@ export default class S3Append {
     return Promise.resolve();
   }
 
-  private appendJson(text: string|any, formatArgs:any[]): Promise<any> {
+  private appendJson(text: string|any, formatArgs: any[]): Promise<any> {
     this.contentsAsJson.push(text);
     this.contents = JSON.stringify(this.contentsAsJson);
     return Promise.resolve();

@@ -4,6 +4,7 @@ var path = require('path');
 var util = require('util');
 var supportedDateFields = ['created', 'createDate', 'creationDate', 'date'];
 function tryParse(text) {
+    'use strict';
     try {
         return JSON.parse(text);
     }
@@ -12,6 +13,7 @@ function tryParse(text) {
     }
 }
 function isJSON(file) {
+    'use strict';
     if (file.contentType === 'application/json') {
         return tryParse(file.contents);
     }
@@ -26,6 +28,7 @@ function isJSON(file) {
 }
 exports.isJSON = isJSON;
 function getDate(a) {
+    'use strict';
     for (var i = 0; i < supportedDateFields.length; i++) {
         var key = supportedDateFields[i];
         var test_1 = a[key];
@@ -37,6 +40,7 @@ function getDate(a) {
 }
 exports.getDate = getDate;
 function jsonCompare(a, b) {
+    'use strict';
     var aDate = getDate(a);
     var bDate = getDate(b);
     if (aDate && bDate) {
@@ -57,7 +61,7 @@ function jsonCompare(a, b) {
 }
 exports.jsonCompare = jsonCompare;
 function sortJSON(files) {
-    var allJSON = true;
+    'use strict';
     var lines = files.reduce(function (result, row) {
         if (!result) {
             return result;
@@ -79,6 +83,7 @@ function sortJSON(files) {
 }
 exports.sortJSON = sortJSON;
 function sortContents(files) {
+    'use strict';
     var json = sortJSON(files);
     if (!!json) {
         return {
@@ -88,8 +93,8 @@ function sortContents(files) {
     }
     var lines = files.reduce(function (result, row) {
         var rowLines = row.contents.split('\n')
-            .filter(function (row) {
-            return !!row;
+            .filter(function (inner) {
+            return !!inner;
         });
         return result.concat(rowLines);
     }, []);

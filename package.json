@@ -16,11 +16,12 @@
     "mocha": "^2.4.5",
     "uncommitted": "^1.0.0",
     "tsc": "^1.20150623.0",
+    "tslint": "^3.7.3",
     "typescript": "^1.7.5",
     "typings": "^0.6.8"
   },
   "scripts": {
-    "build": "npm run clean && npm run typings install && npm run tsc",
+    "build": "npm run clean && npm run typings install && npm run tsc && npm run lint",
     "predopublish": "npm run build && uncommitted",
     "dopublish": "npm publish",
     "tsc": "tsc",
@@ -29,7 +30,9 @@
     "tsc:w": "tsc -w",
     "pretest": "npm run build",
     "test": "mocha",
-    "typings": "typings"
+    "typings": "typings",
+    "lint": "tslint lib/**/*.ts test/**.*.ts index.ts",
+    "lint:q": "tslint --force lib/**/*.ts test/**.*.ts index.ts"
   },
   "repository": {
     "type": "git",

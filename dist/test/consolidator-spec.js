@@ -129,6 +129,7 @@ describe('Consolidator', function () {
             return Promise.all(promises);
         });
         it('should consolidate two files into a new file', function () {
+            this.timeout(5 * 1000);
             return subject.consolidate(files.map(function (row) { return row.key; }), thirdFile)
                 .then(function (result) {
                 var promises = [files[0].key, files[1].key, thirdFile].map(function (row) {

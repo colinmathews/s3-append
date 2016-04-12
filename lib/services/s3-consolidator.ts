@@ -2,15 +2,14 @@ import { Promise } from 'es6-promise';
 import S3Config from '../models/s3-config';
 import Format from '../models/format';
 import FileContents from '../models/file-contents';
-import sorter from '../interfaces/sorter';
-import { S3, config as awsConfig, Config, Credentials } from 'aws-sdk';
-import util = require('util');
+import ISorter from '../interfaces/sorter';
+import { S3, config as awsConfig, Credentials } from 'aws-sdk';
 import contentType from '../util/content-type';
 import sortContents from '../util/sort-contents';
 require('date-format-lite');
 
 export default class S3Consolidator {
-  private s3:S3;
+  private s3: S3;
 
   constructor(public config: S3Config) {
     awsConfig.update({
@@ -24,16 +23,17 @@ export default class S3Consolidator {
     });
   }
 
-  concatonate(keys: string[], sort: sorter = sortContents): Promise<any> {
+  concatonate(keys: string[], sort: ISorter = sortContents): Promise<any> {
     return this.downloadAll(keys)
     .then((result) => {
       return sort(result);
     });
   }
 
-  consolidate(keys: string[], 
-    consolidatedKey:string,
-    sort: sorter = sortContents,
+  consolidate(
+    keys: string[],
+    consolidatedKey: string,
+    sort: ISorter = sortContents,
     acl: string = 'private'): Promise<any> {
     return this.concatonate(keys, sort)
     .then((result) => {
@@ -47,8 +47,8 @@ export default class S3Consolidator {
     });
   }
 
-  private encodeKey(key:string): string {
-    return decodeURIComponent(key.replace(/\+/g, " "));
+  private encodeKey(key: string): string {
+    return decodeURIComponent(key.replace(/\+/g, ' '));
   }
 
   private downloadAll(keys: string[]): Promise<FileContents[]> {
@@ -77,7 +77,7 @@ export default class S3Consolidator {
     });
   }
 
-  private write(key:string, format:Format, contents:string, acl:string): Promise<any> {
+  private write(key: string, format: Format, contents: string, acl: string): Promise<any> {
     let s3 = new S3();
     let args = {
       Bucket: this.config.bucket,
@@ -110,7 +110,7 @@ export default class S3Consolidator {
         Bucket: this.config.bucket,
         Key: this.encodeKey(key)
       };
-      (<any>this.s3).deleteObject(args, (err, data) => {
+      (this.s3 as any).deleteObject(args, (err, data) => {
         if (err) {
           return fail(err);
         }

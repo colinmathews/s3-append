@@ -1,4 +1,4 @@
-import { Promise } from 'es6-promise'; 
+import { Promise } from 'es6-promise';
 import FileContents from '../models/file-contents';
 import Format from '../models/format';
 import path = require('path');
@@ -6,7 +6,8 @@ import util = require('util');
 
 const supportedDateFields = ['created', 'createDate', 'creationDate', 'date'];
 
-function tryParse(text:string) {
+function tryParse(text: string): any {
+  'use strict';
   try {
     return JSON.parse(text);
   }
@@ -15,7 +16,8 @@ function tryParse(text:string) {
   }
 }
 
-export function isJSON(file:FileContents): any {
+export function isJSON(file: FileContents): any {
+  'use strict';
   if (file.contentType === 'application/json') {
     return tryParse(file.contents);
   }
@@ -29,7 +31,8 @@ export function isJSON(file:FileContents): any {
   }
 }
 
-export function getDate(a): Date {
+export function getDate(a: any): Date {
+  'use strict';
   for (let i = 0; i < supportedDateFields.length; i++) {
     let key = supportedDateFields[i];
     let test = a[key];
@@ -40,7 +43,8 @@ export function getDate(a): Date {
   return null;
 }
 
-export function jsonCompare(a, b): number {
+export function jsonCompare(a: any, b: any): number {
+  'use strict';
   let aDate = getDate(a);
   let bDate = getDate(b);
   if (aDate && bDate) {
@@ -61,20 +65,23 @@ export function jsonCompare(a, b): number {
 }
 
 export function sortJSON(files: FileContents[]): any[] {
-  let allJSON = true;
-  let lines = files.reduce((result, row) => {
-    if (!result) {
-      return result;
-    }
-    let json = isJSON(row);
-    if (!json) {
-      return null;
-    }
-    if (!util.isArray(json)) {
-      json = [json];
-    }
-    return result.concat(json);
-  }, []);
+  'use strict';
+  let lines = files.reduce(
+    (result, row) => {
+      if (!result) {
+        return result;
+      }
+      let json = isJSON(row);
+      if (!json) {
+        return null;
+      }
+      if (!util.isArray(json)) {
+        json = [json];
+      }
+      return result.concat(json);
+    },
+    []
+  );
   if (!lines) {
     return null;
   }
@@ -84,6 +91,7 @@ export function sortJSON(files: FileContents[]): any[] {
 }
 
 export default function sortContents(files: FileContents[]): any | Promise<any> {
+  'use strict';
   let json = sortJSON(files);
   if (!!json) {
     return {
@@ -92,13 +100,16 @@ export default function sortContents(files: FileContents[]): any | Promise<any> 
     };
   }
 
-  let lines = files.reduce((result, row) => {
-    let rowLines = row.contents.split('\n')
-      .filter((row) => {
-        return !!row;
-      });
-    return result.concat(rowLines);
-  }, []);
+  let lines = files.reduce(
+    (result, row) => {
+      let rowLines = row.contents.split('\n')
+        .filter((inner) => {
+          return !!inner;
+        });
+      return result.concat(rowLines);
+    },
+    []
+  );
   lines.sort();
   return {
     format: Format.Text,

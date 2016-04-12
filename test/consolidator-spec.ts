@@ -144,6 +144,7 @@ describe('Consolidator', () => {
     });
 
     it('should consolidate two files into a new file', function() {
+      this.timeout(5 * 1000);
       return subject.consolidate(files.map((row) => row.key), thirdFile)
       .then((result) => {
         let promises = [files[0].key, files[1].key, thirdFile].map((row) => {

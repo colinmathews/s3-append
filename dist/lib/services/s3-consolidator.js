@@ -41,7 +41,7 @@ var S3Consolidator = (function () {
         });
     };
     S3Consolidator.prototype.encodeKey = function (key) {
-        return decodeURIComponent(key.replace(/\+/g, " "));
+        return decodeURIComponent(key.replace(/\+/g, ' '));
     };
     S3Consolidator.prototype.downloadAll = function (keys) {
         var _this = this;

@@ -13,10 +13,10 @@ export default class S3Append {
     constructor(config: S3Config, key: string, format?: Format, acl?: string);
     appendWithDate(text: string, second?: boolean | any[], third?: boolean): Promise<any>;
     append(text: string | any, second?: boolean | any[], third?: boolean): Promise<any>;
-    private parseAppendArgs(second?, third?);
     flush(promiseToIgnore?: Promise<any>): Promise<any>;
     getContents(): Promise<string | any>;
     delete(): Promise<any>;
+    private parseAppendArgs(second?, third?);
     private waitForPromises(promiseToIgnore?);
     private readContents();
     private onRead(contents);

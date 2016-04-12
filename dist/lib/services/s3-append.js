@@ -44,20 +44,6 @@ var S3Append = (function () {
         this.pendingPromises.push(promise);
         return promise;
     };
-    S3Append.prototype.parseAppendArgs = function (second, third) {
-        var formatArgs = [];
-        var autoFlush = false;
-        if (typeof (second) === 'boolean') {
-            autoFlush = second;
-        }
-        else if (second instanceof Array) {
-            formatArgs = second;
-        }
-        if (typeof (third) === 'boolean') {
-            autoFlush = third;
-        }
-        return [formatArgs, autoFlush];
-    };
     S3Append.prototype.flush = function (promiseToIgnore) {
         var _this = this;
         return this.waitForPromises(promiseToIgnore)
@@ -84,7 +70,7 @@ var S3Append = (function () {
         var s3 = new aws_sdk_1.S3();
         var args = {
             Bucket: this.config.bucket,
-            Key: decodeURIComponent(this.key.replace(/\+/g, " "))
+            Key: decodeURIComponent(this.key.replace(/\+/g, ' '))
         };
         return new es6_promise_1.Promise(function (ok, fail) {
             s3.deleteObject(args, function (err, data) {
@@ -95,6 +81,20 @@ var S3Append = (function () {
                 ok();
             });
         });
+    };
+    S3Append.prototype.parseAppendArgs = function (second, third) {
+        var formatArgs = [];
+        var autoFlush = false;
+        if (typeof (second) === 'boolean') {
+            autoFlush = second;
+        }
+        else if (second instanceof Array) {
+            formatArgs = second;
+        }
+        if (typeof (third) === 'boolean') {
+            autoFlush = third;
+        }
+        return [formatArgs, autoFlush];
     };
     S3Append.prototype.waitForPromises = function (promiseToIgnore) {
         var wait = this.pendingPromises.filter(function (row) {
@@ -110,7 +110,7 @@ var S3Append = (function () {
         var s3 = new aws_sdk_1.S3();
         var args = {
             Bucket: this.config.bucket,
-            Key: decodeURIComponent(this.key.replace(/\+/g, " "))
+            Key: decodeURIComponent(this.key.replace(/\+/g, ' '))
         };
         return new es6_promise_1.Promise(function (ok, fail) {
             s3.getObject(args, function (err, data) {

@@ -1,6 +1,7 @@
 "use strict";
 var format_1 = require('../models/format');
 function contentType(format) {
+    'use strict';
     switch (format) {
         case format_1.default.Text:
             return 'text/plain';
