@@ -132,7 +132,11 @@ var S3Append = (function () {
         this.contents = contents;
         if (this.format === format_1.default.Json) {
             if (contents) {
-                this.contentsAsJson = JSON.parse(contents);
+                if (eval(contents)) {
+                    this.contentsAsJson = JSON.parse(contents);
+                } else {
+                    this.contentsAsJson = [];
+                }
             }
             else {
                 this.contentsAsJson = [];
