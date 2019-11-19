@@ -115,7 +115,7 @@ var S3Append = (function () {
         return new es6_promise_1.Promise(function (ok, fail) {
             s3.getObject(args, function (err, data) {
                 if (err) {
-                    if (err.code === 'AccessDenied') {
+                    if (err.code === 'AccessDenied' || err.code === "NoSuchKey") {
                         _this.onRead('');
                         return ok();
                     }
