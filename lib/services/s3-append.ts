@@ -124,7 +124,7 @@ export default class S3Append {
     return new Promise((ok, fail) => {
       s3.getObject(args, (err, data) => {
         if (err) {
-          if (err.code === 'AccessDenied') {
+          if (err.code === 'AccessDenied' || err.code === "NoSuchKey") {
             this.onRead('');
             return ok();
           }
